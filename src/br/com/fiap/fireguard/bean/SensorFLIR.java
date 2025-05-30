@@ -1,0 +1,99 @@
+package br.com.fiap.fireguard.bean;
+
+import javax.swing.*;
+
+public class SensorFLIR implements ISensor {
+
+    // Atributos privados
+    private String resolucao;
+    private int temperatura;
+    private double sensibilidadeTermica;
+    private String coordenadaLocalCaptado;
+
+    // Construtor
+    public SensorFLIR() {
+        this.resolucao = "640x480";
+        this.temperatura = 0;
+        this.sensibilidadeTermica = 0.0;
+        this.coordenadaLocalCaptado = "0,0";
+    }
+
+    // Getters e Setters
+    public String getResolucao() {
+        return resolucao;
+    }
+
+    public void setResolucao(String resolucao) {
+        try {
+            if (resolucao.equals("320x240") || resolucao.equals("640x480") || resolucao.equals("1280x1024")) {
+                this.resolucao = resolucao;
+            } else {
+                throw new Exception("Resolução inválida. Use: 320x240, 640x480 ou 1280x1024.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            setResolucao(JOptionPane.showInputDialog(null, "Digite novamente a resolução válida:", "Resolução FLIR", JOptionPane.QUESTION_MESSAGE));
+        }
+    }
+
+    public int getTemperatura() {
+        return temperatura;
+    }
+
+    public void setTemperatura(int temperatura) {
+        try {
+            if (temperatura < -50 || temperatura > 1000) {
+                throw new Exception("Temperatura fora dos limites suportados (-50 a 1000°C).");
+            }
+            this.temperatura = temperatura;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            setTemperatura(Integer.parseInt(JOptionPane.showInputDialog(null, "Digite novamente a temperatura (-50 a 1000):", "Temperatura", JOptionPane.QUESTION_MESSAGE)));
+        }
+    }
+
+    public double getSensibilidadeTermica() {
+        return sensibilidadeTermica;
+    }
+
+    public void setSensibilidadeTermica(double sensibilidadeTermica) {
+        try {
+            if (sensibilidadeTermica <= 0.0 || sensibilidadeTermica > 5.0) {
+                throw new Exception("Sensibilidade térmica deve estar entre 0.1 e 5.0°C.");
+            }
+            this.sensibilidadeTermica = sensibilidadeTermica;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            setSensibilidadeTermica(Double.parseDouble(JOptionPane.showInputDialog(null, "Digite novamente a sensibilidade térmica (0.1 a 5.0):", "Sensibilidade", JOptionPane.QUESTION_MESSAGE)));
+        }
+    }
+
+    public String getCoordenadaLocalCaptado() {
+        return coordenadaLocalCaptado;
+    }
+
+    public void setCoordenadaLocalCaptado(String coordenadaLocalCaptado) {
+        if (coordenadaLocalCaptado != null && coordenadaLocalCaptado.contains(",")) {
+            this.coordenadaLocalCaptado = coordenadaLocalCaptado;
+        } else {
+            JOptionPane.showMessageDialog(null, "Coordenada inválida. Use o formato: x,y", "Erro", JOptionPane.ERROR_MESSAGE);
+            setCoordenadaLocalCaptado(JOptionPane.showInputDialog(null, "Digite novamente a coordenada (ex: 23.5,-46.6):", "Coordenada", JOptionPane.QUESTION_MESSAGE));
+        }
+    }
+
+    public void capturarImagemTermica(int temperatura, double sensibilidadeTermica, String coordenadaLocalCaptado) {
+        setTemperatura(temperatura);
+        setSensibilidadeTermica(sensibilidadeTermica);
+        setCoordenadaLocalCaptado(coordenadaLocalCaptado);
+    }
+
+    @Override
+    public String captarDados() {
+        return "Dados captados: Temperatura=" + getTemperatura() + "°C, Sensibilidade=" + getSensibilidadeTermica() + "°C, Local=" + getCoordenadaLocalCaptado();
+    }
+
+    @Override
+    public void processarDados(String dadosBrutos) {
+        System.out.println("Processando dados brutos: " + dadosBrutos);
+    }
+}
