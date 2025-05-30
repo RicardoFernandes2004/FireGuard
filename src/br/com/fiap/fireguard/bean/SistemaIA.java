@@ -9,6 +9,14 @@ public class SistemaIA {
         this.versaoModelo = versaoModelo;
     }
 
+    public String getVersaoModelo() {
+        return versaoModelo;
+    }
+
+    public void setVersaoModelo(String versaoModelo) {
+        this.versaoModelo = versaoModelo;
+    }
+
     public boolean isVersaoModeloAtualizado(String modeloAtual) {
         return versaoModelo.equals(modeloAtual);
     }
