@@ -2,90 +2,124 @@ package br.com.fiap.fireguard.bean;
 
 import javax.swing.*;
 
+/**
+ * Classe que representa um sistema de IA especializado na análise de clima.
+ * Herda comportamento da classe abstrata SistemaIA.
+ */
 public class SistemaIAClima extends SistemaIA {
 
-    public SistemaIAClima(String versaoModelo) {
+    private Clima clima;
+
+    /**
+     * Construtor que inicializa a versão do modelo e os dados climáticos.
+     *
+     * @param versaoModelo     versão do modelo da IA
+     * @param temperatura      valor da temperatura atual
+     * @param umidade          valor da umidade atual
+     * @param velocidadeVento  valor da velocidade do vento atual
+     */
+    public SistemaIAClima(String versaoModelo, float temperatura, float umidade, float velocidadeVento) {
         super(versaoModelo);
+        clima = new Clima(temperatura, umidade, velocidadeVento);
     }
 
+    /**
+     * Retorna uma análise textual simples sobre o clima atual.
+     *
+     * @return String com análise geral do clima
+     */
     public String analisarClima() {
-        String temperaturaStr = JOptionPane.showInputDialog(null, "Temperatura em °C:", "Dados Climáticos", JOptionPane.INFORMATION_MESSAGE);
-        String umidadeStr = JOptionPane.showInputDialog(null, "Umidade em %:", "Dados Climáticos", JOptionPane.INFORMATION_MESSAGE);
-        String ventoStr = JOptionPane.showInputDialog(null, "Velocidade do vento em km/h:", "Dados Climáticos", JOptionPane.INFORMATION_MESSAGE);
+        double temperatura = clima.getTemperatura();
+        double umidade = clima.getUmidade();
+        double vento = clima.getVelocidadeVento();
 
-        try {
-            float temperatura = Float.parseFloat(temperaturaStr);
-            float umidade = Float.parseFloat(umidadeStr);
-            float vento = Float.parseFloat(ventoStr);
+        String analise = "Análise Preliminar do Clima:\n";
 
-            return temperatura + ";" + umidade + ";" + vento;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Erro ao processar dados climáticos. Verifique os valores informados.");
-            return "";
-        }
-    }
-
-    @Override
-    public String analisarDados(String dadosAnalisadosClima) {
-        // Retorna os dados formatados com nomes
-        String dado = "";
-        String resposta = "";
-        int contador = 0;
-
-        for (int i = 0; i < dadosAnalisadosClima.length(); i++) {
-            String c = dadosAnalisadosClima.substring(i, i + 1);
-            if (c.equals(";")) {
-                if (contador == 0) {
-                    resposta += "Temperatura: " + dado + "°C, ";
-                } else if (contador == 1) {
-                    resposta += "Umidade: " + dado + "%, ";
-                } else if (contador == 2) {
-                    resposta += "Vento: " + dado + "km/h";
-                }
-                dado = "";
-                contador++;
-            } else {
-                dado += c;
-            }
+        if (temperatura < 10) {
+            analise += "Clima frio. ";
+        } else if (temperatura <= 30) {
+            analise += "Temperatura agradável. ";
+        } else {
+            analise += "Clima quente. ";
         }
 
-        return resposta;
+        if (umidade < 30) {
+            analise += "Ar seco. ";
+        } else if (umidade <= 70) {
+            analise += "Umidade moderada. ";
+        } else {
+            analise += "Alta umidade. ";
+        }
+
+        if (vento < 20) {
+            analise += "Ventos calmos.";
+        } else if (vento <= 60) {
+            analise += "Ventos moderados.";
+        } else {
+            analise += "Ventos fortes! Alerta de segurança.";
+        }
+
+        return analise;
     }
 
+    /**
+     * Avalia o risco de incêndio com base nas condições climáticas.
+     *
+     * @return String indicando o nível de risco: ALTO, MODERADO ou BAIXO
+     */
+    public String analisarDados() {
+        float temperatura = clima.getTemperatura();
+        float umidade = clima.getUmidade();
+        float vento = clima.getVelocidadeVento();
+
+        String risco = "Risco: ";
+
+        if (temperatura > 35 && umidade < 30 && vento > 30) {
+            risco += "ALTO";
+        } else if (temperatura > 25 && umidade < 50) {
+            risco += "MODERADO";
+        } else {
+            risco += "BAIXO";
+        }
+
+        return risco;
+    }
+
+    /**
+     * Calcula o risco numérico de incêndio com base nos dados climáticos.
+     *
+     * @return valor de 0.0 a 3.0 indicando o risco
+     */
     public double calcularRiscoIncendio() {
-        try {
-            String clima = analisarClima();
-            String dado = "";
-            int contador = 0;
+        double risco = 0.0;
 
-            float temperatura = 0;
-            float umidade = 0;
-            float vento = 0;
+        if (clima.getTemperatura() > 30) {
+            risco += 1.0;
+        }
+        if (clima.getUmidade() < 40) {
+            risco += 1.0;
+        }
+        if (clima.getVelocidadeVento() > 25) {
+            risco += 1.0;
+        }
 
-            for (int i = 0; i < clima.length(); i++) {
-                String c = clima.substring(i, i + 1);
-                if (c.equals(";")) {
-                    if (contador == 0) {
-                        temperatura = Float.parseFloat(dado);
-                    } else if (contador == 1) {
-                        umidade = Float.parseFloat(dado);
-                    } else if (contador == 2) {
-                        vento = Float.parseFloat(dado);
-                    }
-                    dado = "";
-                    contador++;
-                } else {
-                    dado += c;
-                }
-            }
+        return risco;
+    }
 
-            double risco = (temperatura * 0.4) - (umidade * 0.3) + (vento * 0.2);
-            if (risco < 0) risco = 0;
-            return risco;
+    /**
+     * Emite alerta visual com base no risco calculado.
+     * Exibe mensagens diferentes dependendo do nível de risco.
+     */
+    @Override
+    public void emitirAlerta() {
+        double risco = calcularRiscoIncendio();
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Erro ao calcular risco de incêndio.");
-            return -1;
+        if (risco == 3.0) {
+            JOptionPane.showMessageDialog(null, "alerta: Risco de incêndio alto.", "ALERTA", JOptionPane.WARNING_MESSAGE);
+        } else if (risco == 2.0) {
+            JOptionPane.showMessageDialog(null, "Atenção: Risco moderado de incêndio.", "ALERTA", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Sem risco de incêndio.", "Alerta", JOptionPane.PLAIN_MESSAGE);
         }
     }
 }

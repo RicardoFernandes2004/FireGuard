@@ -2,22 +2,38 @@ package br.com.fiap.fireguard.bean;
 
 import javax.swing.*;
 
+/**
+ * Implementação de sensor de câmera.
+ * Captura riscos visuais e processa em categorias de risco.
+ */
 public class SensorCamera implements ISensor {
 
     private String resolucao;
     private String modoDeOperacao;
     private String riscosIdentificados;
 
+    /**
+     * Construtor padrão.
+     * Define resolução como 1080p e modo como normal.
+     */
     public SensorCamera() {
         this.resolucao = "1080p";
         this.modoDeOperacao = "normal";
         this.riscosIdentificados = "";
     }
 
+    /**
+     * Retorna a resolução atual da câmera.
+     * @return Resolução (720p, 1080p ou 4K).
+     */
     public String getResolucao() {
         return resolucao;
     }
 
+    /**
+     * Define a resolução da câmera.
+     * @param resolucao Valor desejado.
+     */
     public void setResolucao(String resolucao) {
         try {
             if (resolucao.equals("720p") || resolucao.equals("1080p") || resolucao.equals("4K")) {
@@ -31,10 +47,18 @@ public class SensorCamera implements ISensor {
         }
     }
 
+    /**
+     * Retorna o modo de operação da câmera.
+     * @return Modo atual (normal, noturno ou economia).
+     */
     public String getModoDeOperacao() {
         return modoDeOperacao;
     }
 
+    /**
+     * Define o modo de operação da câmera.
+     * @param modoDeOperacao Valor desejado.
+     */
     public void setModoDeOperacao(String modoDeOperacao) {
         try {
             if (modoDeOperacao.equals("normal") || modoDeOperacao.equals("noturno") || modoDeOperacao.equals("economia")) {
@@ -52,21 +76,39 @@ public class SensorCamera implements ISensor {
         }
     }
 
+    /**
+     * Retorna os riscos identificados após o processamento.
+     * @return Riscos como string separada por ponto e vírgula.
+     */
     public String getRiscosIdentificados() {
         return riscosIdentificados;
     }
 
+    /**
+     * Metodo interno para simular captura de imagem.
+     * @param resolucao Resolução desejada.
+     * @param modoDeOperacao Modo desejado.
+     * @param dadosSimulados Dados de entrada.
+     */
     private void capturarImagem(String resolucao, String modoDeOperacao, String dadosSimulados) {
         setResolucao(resolucao);
         setModoDeOperacao(modoDeOperacao);
         this.riscosIdentificados = dadosSimulados;
     }
 
+    /**
+     * Solicita ao usuário os riscos visuais captados pela câmera.
+     * @return Dados brutos fornecidos pelo usuário.
+     */
     @Override
     public String captarDados() {
         return JOptionPane.showInputDialog(null, "Digite os riscos identificados na imagem (ex: fogo;calor;vento;)", "Riscos", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Processa os dados brutos e converte em categorias de risco.
+     * @param dadosBrutos String com palavras separadas por ponto e vírgula.
+     */
     @Override
     public void processarDados(String dadosBrutos) {
         String palavra = "";

@@ -6,105 +6,104 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
+
+        Drone drone = new Drone(1, 75);
+        CentralDeComando central = new CentralDeComando(3, JOptionPane.showInputDialog("Onde está localizada a central? "));
         SensorCamera sensorCamera = new SensorCamera();
         SensorFLIR sensorFLIR = new SensorFLIR();
-        Drone drone = new Drone(1, 75);
-        SistemaIAClima iaClima = new SistemaIAClima("1.0");
-        CentralDeComando central = new CentralDeComando(3, "Mata Atlântica");
+        SistemaIAClima sistemaIA = new SistemaIAClima("v1.0", 36, 25, 40);
 
-        while (true) {
-            String opcao = JOptionPane.showInputDialog(null,
-                    "Menu Principal:\n" +
-                            "1 - Usar Sensor Camera\n" +
-                            "2 - Usar Sensor FLIR\n" +
-                            "3 - Operar Drone\n" +
-                            "4 - Usar IA Clima\n" +
-                            "5 - Ações da Central de Comando\n" +
-                            "0 - Sair",
-                    "Sistema FireGuard", JOptionPane.QUESTION_MESSAGE);
+        boolean continuar = true;
 
-            if (opcao == null || opcao.equals("0")) break;
+        while (continuar) {
+            String menu = """
+                    🔧 MENU PRINCIPAL:
+                    1 - Ver clima atual
+                    2 - Alterar clima (temperatura, umidade e vento)
+                    3 - Analisar risco de incêndio
+                    4 - Ver status do drone
+                    5 - Atualizar localização do drone
+                    6 - Atualizar status do drone
+                    7 - Enviar drone para patrulha
+                    8 - Monitorar área com drone
+                    9 - Sensor CAMERA - captar e processar dados
+                    10 - Sensor FLIR - captar dados térmicos
+                    11 - Emitir alerta manualmente
+                    """;
 
-            switch (opcao) {
-                case "1": {
-                    String resolucao = JOptionPane.showInputDialog("Digite a resolução (720p, 1080p, 4K):");
-                    String modo = JOptionPane.showInputDialog("Digite o modo (normal, noturno, economia):");
-                    String brutos = sensorCamera.captarDados();
-                    sensorCamera.processarDados(brutos);
-                    JOptionPane.showMessageDialog(null, "Riscos processados: " + sensorCamera.getRiscosIdentificados());
-                    break;
+            String escolha = JOptionPane.showInputDialog(null, menu, "FIREGUARD SYSTEM", JOptionPane.QUESTION_MESSAGE);
+            if (escolha == null) break;
+
+            switch (escolha) {
+                case "1" -> {
+                    JOptionPane.showMessageDialog(null,
+                            sistemaIA.analisarClima() +
+                                    "\n\n(" + sistemaIA.calcularRiscoIncendio() + " ponto(s) de risco)");
                 }
-                case "2": {
-                    sensorFLIR.setResolucao(JOptionPane.showInputDialog("Digite a resolução (320x240, 640x480, 1280x1024):"));
-                    sensorFLIR.setTemperatura(Integer.parseInt(JOptionPane.showInputDialog("Digite a temperatura:")));
-                    sensorFLIR.setSensibilidadeTermica(Double.parseDouble(JOptionPane.showInputDialog("Digite a sensibilidade térmica:")));
-                    sensorFLIR.setCoordenadaLocalCaptado(JOptionPane.showInputDialog("Digite a coordenada (x,y):"));
+
+                case "2" -> {
+                    try {
+                        float temp = Float.parseFloat(JOptionPane.showInputDialog("Temperatura atual:"));
+                        float umi = Float.parseFloat(JOptionPane.showInputDialog("Umidade atual:"));
+                        float vento = Float.parseFloat(JOptionPane.showInputDialog("Velocidade do vento:"));
+
+                        sistemaIA = new SistemaIAClima("v1.0", temp, umi, vento);
+                        JOptionPane.showMessageDialog(null, "Clima atualizado com sucesso.");
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Erro ao atualizar clima.");
+                    }
+                }
+
+                case "3" -> JOptionPane.showMessageDialog(null, sistemaIA.analisarDados());
+
+                case "4" -> JOptionPane.showMessageDialog(null,
+                        "Drone #" + drone.getId() +
+                                "\nLocal: " + drone.getLocalizacaoAtual() +
+                                "\nStatus: " + drone.getStatus() +
+                                "\nBateria: " + drone.getBateria() + "%");
+
+                case "5" -> drone.monitorarArea();
+
+                case "6" -> drone.setStatus();
+
+                case "7" -> {
+                    central.enviarDroneParaPatrulha();
+                    drone.realizarPatrulha();
+                }
+
+                case "8" -> {
+                    drone.monitorarArea();
+                    drone.detectarIncendio();
+                    String alerta = drone.enviarAlerta();
+                    central.receberAlerta(alerta);
+                }
+
+                case "9" -> {
+                    String dados = sensorCamera.captarDados();
+                    sensorCamera.processarDados(dados);
+                    JOptionPane.showMessageDialog(null, "Riscos detectados: " + sensorCamera.getRiscosIdentificados());
+                }
+
+                case "10" -> {
+
+                    int temperatura = Integer.parseInt(JOptionPane.showInputDialog("Temperatura captada:"));
+                    double sensibilidade = Double.parseDouble(JOptionPane.showInputDialog("Sensibilidade térmica:"));
+                    String coordenada = JOptionPane.showInputDialog("Coordenada captada (ex: 23.5,-46.6):");
+
+                    sensorFLIR.capturarImagemTermica(temperatura, sensibilidade, coordenada);
                     JOptionPane.showMessageDialog(null, sensorFLIR.captarDados());
-                    break;
+
                 }
-                case "3": {
-                    String acao = JOptionPane.showInputDialog(null,
-                            "Ações do Drone:\n" +
-                                    "1 - Monitorar área\n" +
-                                    "2 - Detectar incêndio\n" +
-                                    "3 - Realizar patrulha\n" +
-                                    "4 - Retornar à base\n" +
-                                    "5 - Atualizar status",
-                            "Drone", JOptionPane.QUESTION_MESSAGE);
-                    switch (acao) {
-                        case "1":
-                            drone.monitorarArea();
-                            break;
-                        case "2":
-                            drone.detectarIncendio();
-                            break;
-                        case "3":
-                            drone.realizarPatrulha();
-                            break;
-                        case "4":
-                            drone.retornar();
-                            break;
-                        case "5":
-                            drone.setStatus();
-                            break;
-                        default: JOptionPane.showMessageDialog(null, "Opção inválida.");
-                    }
-                    break;
-                }
-                case "4": {
-                    String dados = iaClima.analisarClima();
-                    if (!dados.equals("")) {
-                        String analise = iaClima.analisarDados(dados);
-                        double risco = iaClima.calcularRiscoIncendio();
-                        JOptionPane.showMessageDialog(null, analise + "\nRisco calculado: " + risco);
-                    }
-                    break;
-                }
-                case "5": {
-                    String acao = JOptionPane.showInputDialog(null,
-                            "Central de Comando:\n" +
-                                    "1 - Receber Alerta\n" +
-                                    "2 - Enviar Drone para Patrulha\n" +
-                                    "3 - Atualizar Status de Drone",
-                            "Central", JOptionPane.QUESTION_MESSAGE);
-                    switch (acao) {
-                        case "1":
-                            central.receberAlerta(drone.enviarAlerta());
-                            break;
-                        case "2":
-                            central.enviarDroneParaPatrulha();
-                            break;
-                        case "3":
-                            central.atualizarStatusDrone();
-                            break;
-                        default: JOptionPane.showMessageDialog(null, "Opção inválida.");
-                    }
-                    break;
-                }
-                default:
-                    JOptionPane.showMessageDialog(null, "Opção inválida.");
+
+                case "11" -> sistemaIA.emitirAlerta();
+
+                default -> JOptionPane.showMessageDialog(null, "Opção inválida.");
             }
+
+            int resposta = JOptionPane.showConfirmDialog(null, "Deseja continuar?", "Continuar", JOptionPane.YES_NO_OPTION);
+            if (resposta != JOptionPane.YES_OPTION) continuar = false;
         }
-        JOptionPane.showMessageDialog(null, "Encerrando o sistema. Até logo!");
+
+        JOptionPane.showMessageDialog(null, "Sistema encerrado.");
     }
 }

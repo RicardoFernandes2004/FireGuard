@@ -2,15 +2,21 @@ package br.com.fiap.fireguard.bean;
 
 import javax.swing.*;
 
+/**
+ * Implementação de sensor térmico FLIR.
+ * Captura dados como temperatura, sensibilidade térmica e coordenadas.
+ */
 public class SensorFLIR implements ISensor {
 
-    // Atributos privados
     private String resolucao;
     private int temperatura;
     private double sensibilidadeTermica;
     private String coordenadaLocalCaptado;
 
-    // Construtor
+    /**
+     * Construtor padrão.
+     * Define valores iniciais padrão para os atributos.
+     */
     public SensorFLIR() {
         this.resolucao = "640x480";
         this.temperatura = 0;
@@ -18,11 +24,18 @@ public class SensorFLIR implements ISensor {
         this.coordenadaLocalCaptado = "0,0";
     }
 
-    // Getters e Setters
+    /**
+     * Retorna a resolução da imagem térmica.
+     * @return Resolução (320x240, 640x480 ou 1280x1024).
+     */
     public String getResolucao() {
         return resolucao;
     }
 
+    /**
+     * Define a resolução da imagem térmica.
+     * @param resolucao Valor desejado.
+     */
     public void setResolucao(String resolucao) {
         try {
             if (resolucao.equals("320x240") || resolucao.equals("640x480") || resolucao.equals("1280x1024")) {
@@ -36,10 +49,18 @@ public class SensorFLIR implements ISensor {
         }
     }
 
+    /**
+     * Retorna a temperatura captada pelo sensor.
+     * @return Temperatura em graus Celsius.
+     */
     public int getTemperatura() {
         return temperatura;
     }
 
+    /**
+     * Define a temperatura captada.
+     * @param temperatura Valor entre -50 e 1000.
+     */
     public void setTemperatura(int temperatura) {
         try {
             if (temperatura < -50 || temperatura > 1000) {
@@ -52,10 +73,18 @@ public class SensorFLIR implements ISensor {
         }
     }
 
+    /**
+     * Retorna a sensibilidade térmica do sensor.
+     * @return Sensibilidade em graus Celsius.
+     */
     public double getSensibilidadeTermica() {
         return sensibilidadeTermica;
     }
 
+    /**
+     * Define a sensibilidade térmica.
+     * @param sensibilidadeTermica Valor entre 0.1 e 5.0.
+     */
     public void setSensibilidadeTermica(double sensibilidadeTermica) {
         try {
             if (sensibilidadeTermica <= 0.0 || sensibilidadeTermica > 5.0) {
@@ -68,10 +97,18 @@ public class SensorFLIR implements ISensor {
         }
     }
 
+    /**
+     * Retorna a coordenada onde o dado foi captado.
+     * @return Coordenada em formato "x,y".
+     */
     public String getCoordenadaLocalCaptado() {
         return coordenadaLocalCaptado;
     }
 
+    /**
+     * Define a coordenada do ponto analisado.
+     * @param coordenadaLocalCaptado Coordenada no formato "x,y".
+     */
     public void setCoordenadaLocalCaptado(String coordenadaLocalCaptado) {
         if (coordenadaLocalCaptado != null && coordenadaLocalCaptado.contains(",")) {
             this.coordenadaLocalCaptado = coordenadaLocalCaptado;
@@ -81,17 +118,31 @@ public class SensorFLIR implements ISensor {
         }
     }
 
+    /**
+     * Define os dados captados em uma simulação de imagem térmica.
+     * @param temperatura Temperatura captada.
+     * @param sensibilidadeTermica Sensibilidade térmica.
+     * @param coordenadaLocalCaptado Local captado.
+     */
     public void capturarImagemTermica(int temperatura, double sensibilidadeTermica, String coordenadaLocalCaptado) {
         setTemperatura(temperatura);
         setSensibilidadeTermica(sensibilidadeTermica);
         setCoordenadaLocalCaptado(coordenadaLocalCaptado);
     }
 
+    /**
+     * Retorna uma string com os dados captados pelo sensor.
+     * @return Dados térmicos e coordenada.
+     */
     @Override
     public String captarDados() {
         return "Dados captados: Temperatura=" + getTemperatura() + "°C, Sensibilidade=" + getSensibilidadeTermica() + "°C, Local=" + getCoordenadaLocalCaptado();
     }
 
+    /**
+     * Simula o processamento de dados recebidos pelo sensor.
+     * @param dadosBrutos Dados de entrada a serem processados.
+     */
     @Override
     public void processarDados(String dadosBrutos) {
         System.out.println("Processando dados brutos: " + dadosBrutos);
