@@ -6,7 +6,7 @@ import javax.swing.*;
  * Representa um sistema de inteligência artificial capaz de analisar dados
  * e identificar riscos com base em palavras-chave.
  */
-public abstract class SistemaIA {
+public class SistemaIA {
 
     /** Versão atual do modelo da IA. */
     protected String versaoModelo;
@@ -61,44 +61,35 @@ public abstract class SistemaIA {
     /**
      * Identifica o risco com base nas palavras presentes na análise.
      *
-     * @param analise texto a ser avaliado.
      * @return nível de risco numérico.
      */
-    public int identificarRisco(String analise) {
+    public int identificarRisco() {
         int risco = 0;
-        String palavra = "";
-
-        for (int i = 0; i < analise.length(); i++) {
-            String c = analise.substring(i, i + 1);
-            if (c.equals(";")) {
-                if (palavra.equals("fogo")) {
-                    risco += 5;
-                } else if (palavra.equals("fumaça")) {
-                    risco += 3;
-                } else if (palavra.equals("calor")) {
-                    risco += 2;
-                } else if (palavra.equals("vento")) {
-                    risco += 1;
-                }
-                palavra = "";
-            } else {
-                palavra += c;
-            }
-        }
-
-        if (!palavra.equals("")) {
-            if (palavra.equals("fogo")) {
-                risco += 5;
-            } else if (palavra.equals("fumaça")) {
-                risco += 3;
-            } else if (palavra.equals("calor")) {
-                risco += 2;
-            } else if (palavra.equals("vento")) {
-                risco += 1;
-            }
-        }
-
         String nivel = "baixo";
+
+        do {
+            String palavra = JOptionPane.showInputDialog("Digite o risco identificado (fogo, fumaça, calor, vento):");
+
+            if (palavra != null && !palavra.isEmpty()) {
+                if (palavra.equalsIgnoreCase("fogo")) {
+                    risco += 5;
+                } else if (palavra.equalsIgnoreCase("fumaça")) {
+                    risco += 3;
+                } else if (palavra.equalsIgnoreCase("calor")) {
+                    risco += 2;
+                } else if (palavra.equalsIgnoreCase("vento")) {
+                    risco += 1;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Risco não reconhecido.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+
+            int continuar = JOptionPane.showConfirmDialog(null, "Deseja adicionar outro risco?", "Continuar?", JOptionPane.YES_NO_OPTION);
+            if (continuar != JOptionPane.YES_OPTION) break;
+
+        } while (true);
+
+
         if (risco >= 10) {
             nivel = "crítico";
         } else if (risco >= 7) {
