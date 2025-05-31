@@ -40,6 +40,7 @@ public class Main {
                     JOptionPane.showMessageDialog(null,
                             sistemaIAClima.analisarClima() +
                                     "\n\n(" + sistemaIAClima.calcularRiscoIncendio() + " ponto(s) de risco)");
+                    break;
 
                 case "2":
                     try {
@@ -53,10 +54,12 @@ public class Main {
                         // tenta pegar alguma exception fora do escopo das regras de negocio
                         JOptionPane.showMessageDialog(null, "Erro ao atualizar clima.");
                     }
+                    break;
 
 
                 case "3":
                     JOptionPane.showMessageDialog(null, sistemaIA.identificarRisco());
+                    break;
 
                 case "4":
                     JOptionPane.showMessageDialog(null,
@@ -64,27 +67,33 @@ public class Main {
                                 "\nLocal: " + drone.getLocalizacaoAtual() +
                                 "\nStatus: " + drone.getStatus() +
                                 "\nBateria: " + drone.getBateria() + "%");
+                    break;
 
                 case "5":
                     drone.monitorarArea();
+                    break;
 
                 case "6":
                     drone.setStatus();
+                    break;
 
                 case "7":
                     central.enviarDroneParaPatrulha();
                     drone.realizarPatrulha();
+                    break;
 
                 case "8":
                     drone.monitorarArea();
                     drone.detectarIncendio();
                     String alerta = drone.enviarAlerta();
                     central.receberAlerta(alerta);
+                    break;
 
                 case "9":
                     String dados = sensorCamera.captarDados();
                     sensorCamera.processarDados(dados);
                     JOptionPane.showMessageDialog(null, "Riscos detectados: " + sensorCamera.getRiscosIdentificados());
+                    break;
 
                 case "10":
                     int temperatura = Integer.parseInt(JOptionPane.showInputDialog("Temperatura captada:"));
@@ -93,10 +102,12 @@ public class Main {
 
                     sensorFLIR.capturarImagemTermica(temperatura, sensibilidade, coordenada);
                     JOptionPane.showMessageDialog(null, sensorFLIR.captarDados());
+                    break;
 
                 case "11":
                     int resposta = JOptionPane.showConfirmDialog(null, "Deseja sair?", "Sair", JOptionPane.YES_NO_OPTION);
                     if (resposta != JOptionPane.YES_OPTION) continuar = false;
+                    break;
 
                 default:
                     JOptionPane.showMessageDialog(null, "Opção inválida.");
