@@ -1,4 +1,4 @@
-package br.com.fiap.fireguard.bean;
+package br.com.fiap.brasilsemchamas.bean;
 
 import javax.swing.*;
 
