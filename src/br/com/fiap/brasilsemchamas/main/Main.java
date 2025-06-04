@@ -1,6 +1,6 @@
-package br.com.fiap.fireguard.main;
+package br.com.fiap.brasilsemchamas.main;
 
-import br.com.fiap.fireguard.bean.*;
+import br.com.fiap.brasilsemchamas.bean.*;
 
 import javax.swing.*;
 
@@ -32,7 +32,7 @@ public class Main {
                     11 - Sair
                     """;
 
-            String escolha = JOptionPane.showInputDialog(null, menu, "FIREGUARD SYSTEM", JOptionPane.QUESTION_MESSAGE);
+            String escolha = JOptionPane.showInputDialog(null, menu, "Brasil Sem Chamas", JOptionPane.QUESTION_MESSAGE);
             if (escolha == null) break;
 
             switch (escolha) {
