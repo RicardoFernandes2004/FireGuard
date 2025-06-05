@@ -112,7 +112,8 @@ public class Main {
                 case "11":
                     int resposta = JOptionPane.showConfirmDialog(null, "Deseja sair?", "Sair", JOptionPane.YES_NO_OPTION);
                     if (resposta != JOptionPane.YES_OPTION) continuar = false;
-                    break;
+                    JOptionPane.showMessageDialog(null, "Sistema encerrado.");
+                    System.exit(0);
 
                 default:
                     JOptionPane.showMessageDialog(null, "Opção inválida.");
